@@ -22,6 +22,8 @@ ORANGE = (255, 165, 0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 COLOR = (235, 137, 52)
+COLOR1 = (241, 245, 140)
+COLOR2 = (144, 240, 206)
 
 class button():
 	def __init__(self, color, x, y, width, height, text = ''):
@@ -459,6 +461,10 @@ class Block:
 		self.color = GREEN
 	def make_done(self):
 		self.color = COLOR
+	def make_1(self):
+		self.color = COLOR1
+	def make_2(self):
+		self.color = COLOR2
 
 
 
@@ -491,58 +497,131 @@ def drawArr(win, arr, arrSize):
 	pygame.display.update()
 
 def bubbleSort(win, drawArr, arr, arrSize):
+	delay1 = 500
+	delay2 = 140
+	speed1 = button(TURQUOISE, 350, 450, 100, 50, '1x')
+	speed2 = button(TURQUOISE, 525, 450, 100, 50, '2x')
+	speed3 = button(TURQUOISE, 700, 450, 100, 50, '3x')
 	for curSize in reversed(range(arrSize)):
 		for i in range(curSize):
+			pos = pygame.mouse.get_pos()
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if speed1.isOver(pos):
+						delay1 = 500
+						delay2 = 140
+					if speed2.isOver(pos):
+						delay1 = 250
+						delay2 = 70
+					if speed3.isOver(pos):
+						delay1 = 100
+						delay2 = 30
+				if event.type == pygame.MOUSEMOTION:
+					if speed1.isOver(pos):
+						speed1.color = GREY
+					if speed2.isOver(pos):
+						speed2.color = GREY
+					elif speed3.isOver(pos):
+						speed3.color = GREY
+					else:
+						speed2.color = TURQUOISE
+						speed3.color = TURQUOISE
+						speed1.color = TURQUOISE
 			arr[i].make_sel()
 			arr[i+1].make_cur()
 			win.fill(WHITE)
 			drawArr()
-			pygame.time.delay(140)
+			drawWindow(win, speed2)
+			drawWindow(win, speed3)
+			drawWindow(win, speed1)
+			pygame.display.update()
+			pygame.time.delay(delay2)
 			if arr[i].height>arr[i+1].height:
 				arr[i+1].y += 15
 				arr[i].y -= 15
 				win.fill(WHITE)
 				drawArr()
-				pygame.time.delay(500)
+				drawWindow(win, speed2)
+				drawWindow(win, speed3)
+				drawWindow(win, speed1)
+				pygame.display.update()
+				pygame.time.delay(delay1)
 				arr[i],arr[i+1] = arr[i+1],arr[i]
 				arr[i].y -= 15
 				arr[i+1].y += 15
-				win.fill(WHITE)
-				drawArr()
 			win.fill(WHITE)
 			drawArr()
-			pygame.time.delay(140)
+			drawWindow(win, speed2)
+			drawWindow(win, speed3)
+			drawWindow(win, speed1)
+			pygame.display.update()
+			pygame.time.delay(delay2)
 			arr[i].make_norm()
 		arr[curSize].make_done()
 
 def insertionSort(win, drawArr, arr, arrSize):
+	delay1 = 500
+	delay2 = 70
+	speed1 = button(TURQUOISE, 350, 450, 100, 50, '1x')
+	speed2 = button(TURQUOISE, 525, 450, 100, 50, '2x')
+	speed3 = button(TURQUOISE, 700, 450, 100, 50, '3x')
 	for i in range(1, arrSize):
+		for j in range(0, i):
+			arr[j].make_done()
+		win.fill(WHITE)
+		drawArr()
+		drawWindow(win, speed2)
+		drawWindow(win, speed3)
+		drawWindow(win, speed1)
+		pygame.display.update()
+		pygame.time.delay(1000)
 		for j in reversed(range(1,i+1)):
+			pos = pygame.mouse.get_pos()
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
+					if event.type == pygame.QUIT:
+						pygame.quit()
+					if event.type == pygame.MOUSEBUTTONDOWN:
+						if speed2.isOver(pos):
+							delay1 = 250
+							delay2 = 70
+						if speed3.isOver(pos):
+							delay1 = 100
+							delay2 = 30
+						if speed1.isOver(pos):
+							delay1 = 500
+							delay2 = 70
+					if event.type == pygame.MOUSEMOTION:
+						if speed2.isOver(pos):
+							speed2.color = GREY
+						elif speed3.isOver(pos):
+							speed3.color = GREY
+						elif speed1.isOver(pos):
+							speed1.color = GREY
+						else:
+							speed2.color = TURQUOISE
+							speed3.color = TURQUOISE
+							speed1.color = TURQUOISE
 			if arr[j].height>arr[j-1].height:
 				break
 			arr[j].make_sel()
 			arr[j-1].make_cur()
 			win.fill(WHITE)
 			drawArr()
-			pygame.time.delay(70)
+			pygame.time.delay(delay2)
 			arr[j].y += 15
 			arr[j-1].y -= 15
 			win.fill(WHITE)
 			drawArr()
-			pygame.time.delay(500)
+			pygame.time.delay(delay1)
 			arr[j],arr[j-1] = arr[j-1],arr[j]
 			arr[j].y += 15
 			arr[j-1].y -= 15
 			win.fill(WHITE)
 			drawArr()
-			pygame.time.delay(70)
-			arr[j].make_norm()
+			pygame.time.delay(delay2)
+			arr[j].make_done()
 			arr[j-1].make_norm()
 
 # mergesort visual utility
@@ -551,6 +630,7 @@ def setArr(arr, tarr, l, mid, r, i, j, arrSize):
 	for x in range (0,l):
 		darr.append(arr[x])
 	for x in tarr:
+		x.make_done()
 		darr.append(x)
 	for x in range(i,mid+1):
 		darr.append(arr[x])
@@ -569,20 +649,29 @@ def mergeSort(win, arr, arrSize, l, r):
 	tarr = []
 	i = l
 	j = mid+1
+	for z in range(l, mid+1):
+		arr[z].make_1()
+	for z in range(mid+1, r+1):
+		arr[z].make_2()
+	pygame.time.delay(400)
 	while i<=mid and j<=r:
 		for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()
-		arr[i].make_sel()
-		arr[j].make_cur()
+		#arr[i].make_sel()
+		#arr[j].make_cur()
+		arr[i].y += 15
+		arr[j].y -= 15
 		darr = setArr(arr, tarr, l, mid, r, i, j, arrSize)
 		darr[mid].make_mid()
 		win.fill(WHITE)
 		drawArr(win, darr, arrSize)
-		arr[i].make_norm()
-		arr[j].make_norm()
+		arr[i].make_1()
+		arr[j].make_2()
+		arr[i].y -= 15
+		arr[j].y += 15
 		darr[mid].make_norm()
-		pygame.time.delay(70)
+		pygame.time.delay(1000)
 		if arr[i].height<=arr[j].height:
 			tarr.append(arr[i])
 			i+=1
@@ -594,7 +683,7 @@ def mergeSort(win, arr, arrSize, l, r):
 		win.fill(WHITE)
 		drawArr(win, darr, arrSize)
 		darr[mid].make_norm()
-		pygame.time.delay(70)
+		pygame.time.delay(1000)
 
 	while i<=mid:
 		for event in pygame.event.get():
@@ -605,7 +694,7 @@ def mergeSort(win, arr, arrSize, l, r):
 		darr[i].make_sel()
 		win.fill(WHITE)
 		drawArr(win, darr, arrSize)
-		pygame.time.delay(70)
+		pygame.time.delay(1000)
 		darr[mid].make_norm()
 		darr[i].make_norm()
 		tarr.append(arr[i])
@@ -615,7 +704,7 @@ def mergeSort(win, arr, arrSize, l, r):
 		win.fill(WHITE)
 		drawArr(win, darr, arrSize)
 		darr[mid].make_norm()
-		pygame.time.delay(70)
+		pygame.time.delay(1000)
 
 	while j<=r:
 		for event in pygame.event.get():
@@ -626,7 +715,7 @@ def mergeSort(win, arr, arrSize, l, r):
 		darr[j].make_sel()
 		win.fill(WHITE)
 		drawArr(win, darr, arrSize)
-		pygame.time.delay(70)
+		pygame.time.delay(1000)
 		darr[mid].make_norm()
 		darr[j].make_norm()
 		tarr.append(arr[j])
@@ -636,10 +725,11 @@ def mergeSort(win, arr, arrSize, l, r):
 		win.fill(WHITE)
 		drawArr(win, darr, arrSize)
 		darr[mid].make_norm()
-		pygame.time.delay(70)
+		pygame.time.delay(1000)
 
 	for i in range(l,r+1):
 		arr[i] = tarr[i-l]
+		arr[i].make_norm()
 	arr[mid].make_mid()
 	for i in range(l,r+1):
 		for event in pygame.event.get():
@@ -648,7 +738,7 @@ def mergeSort(win, arr, arrSize, l, r):
 		arr[i].make_sweep()
 		drawArr(win, arr, arrSize)
 		arr[i].make_norm()
-		pygame.time.delay(100)
+		pygame.time.delay(500)
 		if i == mid:
 			arr[i].make_mid()
 	arr[mid].make_norm()
@@ -700,6 +790,8 @@ def sortAlgos(win, width , arr):
 					doSort(win, arr, arrSize, 'BubbleSort')
 				if Shuffle.isOver(pos):
 					random.shuffle(arr)
+					for i in range(arrSize):
+						arr[i].make_norm()
 				if InSort.isOver(pos):
 					doSort(win, arr, arrSize, 'InsertionSort')
 				if MgSort.isOver(pos):
