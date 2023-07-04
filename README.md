@@ -25,7 +25,7 @@ Welcome to the Search and Sort Visualizer! This application allows you to visual
 
 To get started with the Search and Sort Visualizer, follow these steps:
 
-1. Clone the project repository: `git clone https://github.com/example/Search_Sort_Spectra.git`
+1. Clone the project repository: `git clone https://github.com/MokshithPV/Search_Sort_Spectra.git`
 2. Navigate to the project directory: `cd Search_Sort_Spectra`
 3. Install the required dependencies: `pip install pygame random queue`
 4. Run the python file: `python myProj.py`
