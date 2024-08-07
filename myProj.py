@@ -1,5 +1,4 @@
 import pygame
-import math
 import random
 from queue import Queue
 from queue import PriorityQueue
